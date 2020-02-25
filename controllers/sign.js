@@ -7,6 +7,22 @@ var tools          = require('../common/tools');
 var utility        = require('utility');
 var authMiddleWare = require('../middlewares/auth');
 var uuid           = require('uuid');
+var svgCaptcha     = require('svg-captcha');
+
+exports.captcha = function (req, res) {
+  var captcha = svgCaptcha.create({
+    fontSize: 36,
+    noise: 2,
+    width: 80,
+    height: 30,
+    ignoreChars: '0o1il',
+    background: '#cc9966'
+  });
+  req.session.captcha = captcha.text.toLowerCase();
+
+  res.type('svg');
+  res.status(200).send(captcha.data);
+};
 
 //sign up
 exports.showSignup = function (req, res) {
@@ -26,11 +42,22 @@ exports.signup = function (req, res, next) {
     res.render('sign/signup', {error: msg, loginname: loginname, email: email});
   });
 
+  if (config.signup_captcha_enabled) {
+    var captcha   = validator.trim(req.body.captcha);
+    if (captcha.toLowerCase() !== req.session.captcha) {
+      ep.emit('prop_err', '验证码错误。');
+      return;
+    }
+  }
+
   // 验证信息的正确性
   if ([loginname, pass, rePass, email].some(function (item) { return item === ''; })) {
     ep.emit('prop_err', '信息不完整。');
     return;
   }
+
+
+
   if (loginname.length < 5) {
     ep.emit('prop_err', '用户名至少需要5个字符。');
     return;
@@ -110,13 +137,23 @@ exports.login = function (req, res, next) {
   var loginname = validator.trim(req.body.name).toLowerCase();
   var pass      = validator.trim(req.body.pass);
   var ep        = new eventproxy();
-
   ep.fail(next);
+
+
+  if (config.signin_captcha_enabled) {
+    var captcha   = validator.trim(req.body.captcha);
+    if (captcha.toLowerCase() !== req.session.captcha) {
+      res.status(422);
+      return res.render('sign/signin', { error: '验证码错误。' });
+    }
+  }
 
   if (!loginname || !pass) {
     res.status(422);
     return res.render('sign/signin', { error: '信息不完整。' });
   }
+
+
 
   var getUser;
   if (loginname.indexOf('@') !== -1) {

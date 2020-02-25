@@ -91,6 +91,12 @@ var config = {
   // 是否允许直接注册（否则只能走 github 的方式）
   allow_sign_up: true,
 
+  // 是否启用登录验证码
+  signin_captcha_enabled: false,
+
+  // 是否启用注册验证码
+  signup_captcha_enabled: false,
+
   // oneapm 是个用来监控网站性能的服务
   oneapm_key: '',
 

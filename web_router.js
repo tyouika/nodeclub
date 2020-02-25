@@ -38,10 +38,11 @@ router.get('/app/download', site.appDownload);
 if (config.allow_sign_up) {
   router.get('/signup', sign.showSignup);  // 跳转到注册页面
   router.post('/signup', sign.signup);  // 提交注册信息
+  router.get('/captcha', sign.captcha);  // 验证码
 } else {
   // 进行github验证
   router.get('/signup', function (req, res, next) {
-    return res.redirect('/auth/github')
+    return res.redirect('/auth/github');
   });
 }
 router.post('/signout', sign.signout);  // 登出
