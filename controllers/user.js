@@ -11,7 +11,7 @@ var config       = require('../config');
 var EventProxy   = require('eventproxy');
 var validator    = require('validator');
 var _            = require('lodash');
-var uuid = require('node-uuid')
+var uuid = require('uuid')
 
 exports.index = function (req, res, next) {
   var user_name = req.params.name;
