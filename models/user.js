@@ -50,7 +50,7 @@ UserSchema.virtual('avatar_url').get(function () {
   var url = this.avatar || ('https://gravatar.com/avatar/' + utility.md5(this.email.toLowerCase()) + '?size=48&d=retro');
 
   // www.gravatar.com 被墙
-  url = url.replace('www.gravatar.com', 'gravatar.com');
+  url = url.replace('www.gravatar.com/avatar', 'cdn.v2ex.com/gravatar');
 
   // 让协议自适应 protocol，使用 `//` 开头
   if (url.indexOf('http:') === 0) {
